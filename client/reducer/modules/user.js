@@ -6,6 +6,7 @@ const LOGIN_OUT = 'yapi/user/LOGIN_OUT';
 const LOGIN_TYPE = 'yapi/user/LOGIN_TYPE';
 const GET_LOGIN_STATE = 'yapi/user/GET_LOGIN_STATE';
 const REGISTER = 'yapi/user/REGISTER';
+const ADD = 'yapi/user/ADD';
 const SET_BREADCRUMB = 'yapi/user/SET_BREADCRUMB';
 const CHANGE_STUDY_TIP = 'yapi/user/CHANGE_STUDY_TIP';
 const FINISH_STUDY = 'yapi/user/FINISH_STUDY';
@@ -58,14 +59,7 @@ export default (state = initialState, action) => {
     case LOGIN: {
       if (action.payload.data.errcode === 0) {
         return {
-          ...state,
-          isLogin: true,
-          loginState: MEMBER_STATUS,
-          uid: action.payload.data.data.uid,
-          userName: action.payload.data.data.username,
-          role: action.payload.data.data.role,
-          type: action.payload.data.data.type,
-          study: action.payload.data.data.study
+          ...state
         };
       } else {
         return state;
@@ -89,6 +83,17 @@ export default (state = initialState, action) => {
       };
     }
     case REGISTER: {
+      return {
+        ...state,
+        isLogin: true,
+        loginState: MEMBER_STATUS,
+        uid: action.payload.data.data.uid,
+        userName: action.payload.data.data.username,
+        type: action.payload.data.data.type,
+        study: action.payload.data.data ? action.payload.data.data.study : false
+      };
+    }
+    case ADD: {
       return {
         ...state,
         isLogin: true,
@@ -162,6 +167,18 @@ export function regActions(data) {
   return {
     type: REGISTER,
     payload: axios.post('/api/user/reg', param)
+  };
+}
+export function addActions(data) {
+  const { email, password, userName } = data;
+  const param = {
+    email,
+    password,
+    username: userName
+  };
+  return {
+    type: ADD,
+    payload: axios.post('/api/user/add', param)
   };
 }
 
